@@ -45,13 +45,14 @@ class Enemy:
     def __init__(self):
         self.x = random.randint(0, pyxel.width -8)
         self.y = random.randint(0, pyxel.height / 2)
-        self.vy = 3
+        self.vy = 2
         
     def update(self):
         self.y += self.vy
         if self.y > pyxel.height:
-            self.y = random.randint(0, pyxel.height / 2)
-            self.x = random.randint(0, pyxel.width -8)
+            if random.random() < 0.5:
+                self.y = random.randint(0, pyxel.height / 2)
+                self.x = random.randint(0, pyxel.width -8)
             
     def draw(self):
         pyxel.blt(self.x, self.y, 2, 0, 0, 16, 16, 0)
@@ -60,7 +61,7 @@ class Block:
     def __init__(self):
         self.x = random.randint(0, pyxel.width - 8)
         self.y = 0
-        self.vy = random.uniform(2, 5)
+        self.vy = random.uniform(1, 3)
         
     def update(self):
         self.y += self.vy
@@ -77,8 +78,8 @@ class App:
         pyxel.init(160, 120, title="シューティングゲーム")
         pyxel.load("aaaaa.pyxres")
         self.player = Player()
-        self.enemies = [Enemy() for _ in range(5)]
-        self.blocks = [Block() for _ in range(3)]
+        self.enemies = [Enemy() for _ in range(3)]
+        self.blocks = [Block() for _ in range(1)]
         global bullets
         bullets = []
         self.score = 100
@@ -96,7 +97,7 @@ class App:
             block.update()
             
         self.block_spawn_timer += 1
-        if self.block_spawn_timer > 30: 
+        if self.block_spawn_timer > 60: 
             self.blocks.append(Block())
             self.block_spawn_timer = 0   
             
@@ -129,8 +130,11 @@ class App:
                 self.blocks.remove(block)
         
         for block in self.blocks:
-            if (self.player.x < block.x + 8 and self.player.x + self.player.w > block.x and self.player.y < block.y + 8 and self.player.y + self.player.h > block.y):
-                self.score -= 1
+            if (self.player.x < block.x + 8 
+                and self.player.x + self.player.w > block.x 
+                and self.player.y < block.y + 8 
+                and self.player.y + self.player.h > block.y):
+                self.score -= 0.5
                 if self.score < 0:
                     self.score = 0
                     
